@@ -310,16 +310,7 @@ def matmul(a, b):
     elif a.ndim > b.ndim:
         b = b[(a.ndim - b.ndim) * (np.newaxis,)]
 
-    out = blockwise(
-        np.matmul,
-        tuple(range(1, a.ndim + 1)),
-        a,
-        tuple(range(1, a.ndim - 1)) + (a.ndim - 1, 0),
-        b,
-        tuple(range(1, a.ndim - 1)) + (0, a.ndim),
-        dtype=result_type(a, b),
-        concatenate=True,
-    )
+    out = np.einsum("...ij,...jk->...ik", a, b)
 
     if a_is_1d:
         out = out[..., 0, :]
